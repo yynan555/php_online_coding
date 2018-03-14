@@ -1,0 +1,53 @@
+#tree .folder { background:url('../images/file_sprite.png') right bottom no-repeat; }
+#tree .file { background:url('../images/file_sprite.png') 0 0 no-repeat; }
+#tree .file-pdf { background:url('../images/file_sprite.png')  -32px 0 no-repeat; }
+#tree .file-as { background:url('../images/file_sprite.png') -36px 0  no-repeat;}
+#tree .file-c { background:url('../images/file_sprite.png') -72px -0px  no-repeat;}
+#tree .file-iso { background:url('../images/file_sprite.png') -108px -0px  no-repeat;}
+#tree .file-htm, #tree .file-html, #tree .file-xml, #tree .file-xsl {background:url('../images/file_sprite.png')  -126px -0px no-repeat;}
+#tree .file-cf { background:url('../images/file_sprite.png') -162px -0px no-repeat; }
+#tree .file-cpp { background:url('../images/file_sprite.png') -216px -0px  no-repeat;}
+#tree .file-cs { background:url('../images/file_sprite.png') -236px -0px  no-repeat;}
+#tree .file-sql { background:url('../images/file_sprite.png') -272px -0px  no-repeat;}
+#tree .file-xls, #tree .file-xlsx {  background:url('../images/file_sprite.png') -362px -0px  no-repeat;}
+#tree .file-h { background:url('../images/file_sprite.png') -488px -0px no-repeat; }
+#tree .file-crt, #tree .file-pem, #tree .file-cer { background:url('../images/file_sprite.png') -452px -18px no-repeat;}
+#tree .file-php { background:url('../images/file_sprite.png') -108px -18px no-repeat; }
+#tree .file-jpg, #tree .file-jpeg, #tree .file-png, #tree .file-gif, #tree .file-bmp , #tree .file-ico { background:url('../images/file_sprite.png') -126px -18px no-repeat;}
+#tree .file-ppt, #tree .file-pptx { background:url('../images/file_sprite.png')  -144px -18px  no-repeat;}
+#tree .file-rb { background:url('../images/file_sprite.png') -180px -18px  no-repeat;}
+#tree .file-text, #tree .file-txt, #tree .file-md, #tree .file-log, #tree .file-htaccess { background:url('../images/file_sprite.png') -254px -18px no-repeat;}
+#tree .file-doc, #tree .file-docx { background:url('../images/file_sprite.png') -362px -18px  no-repeat;}
+#tree .file-zip, #tree .file-gz, #tree .file-tar, #tree .file-rar {  background:url('../images/file_sprite.png') -416px -18px  no-repeat;}
+#tree .file-js { background:url('../images/file_sprite.png') -434px -18px  no-repeat; }
+#tree .file-css { background:url('../images/file_sprite.png') -144px -0px no-repeat;  }
+#tree .file-fla {  background:url('../images/file_sprite.png') -398px -0px }
+pre {margin:0px auto 0 auto;border-radius:0px; padding:0px;}
+#min_title_list .red_color{ color:red }
+.Hui-aside {z-index: 98}
+.jstree-contextmenu {z-index:99;}
+#new_select_path {
+     padding: 0px !important; 
+}
+.file-box{
+	display: inline-block;
+	position: relative;
+	padding: 3px 5px;
+	overflow: hidden;
+	color:#fff;
+	background-color: #ccc;
+}
+
+.file-btn{
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+    left: 0;
+    outline: none;
+    background-color: transparent;
+    filter:alpha(opacity=0);
+	-moz-opacity:0;
+	-khtml-opacity: 0;
+	opacity: 0;
+}

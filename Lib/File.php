@@ -2,6 +2,7 @@
 namespace Lib;
 
 use \Lib\CommonFun;
+use \lib\Config;
 /**
  * 文件操作类 
  * 用于完成文件及目录相关底层操作
@@ -15,7 +16,7 @@ class File
 
 	public function __construct($path = '')
     {
-        $this->edit_limit_dir = EDIT_LIMIT_DIR;
+        $this->edit_limit_dir = Config::get('app.edit_limit_dir');
         if( !empty($path) ){
             $this->set_path($path);
         }

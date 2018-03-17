@@ -2,6 +2,7 @@
 namespace App;
 
 use \Lib\CommonFun;
+use \Core\UserAuth;
 
 class Controller
 {
@@ -128,19 +129,13 @@ class Controller
     }
 
     // 登录及退出登录
-    public function login($password)
+    public function login($password='')
     {
-        if(PASSWORD == $password){
-            $_SESSION['token'] = true;
-            CommonFun::go_operation();
-        }else{
-            echo '密码错误 返回<a href="'.CommonFun::url().'">登录页面</a>';
-        }
+        UserAuth::login($password);
     }
     public function logout()
     {
-        unset($_SESSION['token']);
-        echo '退出成功 返回<a href="'.CommonFun::url().'">登录页面</a>';
+        UserAuth::logout();
     }
 
     // 上传文件展示页面

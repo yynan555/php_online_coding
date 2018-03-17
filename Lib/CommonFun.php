@@ -1,8 +1,8 @@
 <?php
 namespace Lib;
 /**
- * Created by PhpStorm.
- * User: Administrator
+ * public function.
+ * User: yaoyao
  * Date: 2018/2/24
  * Time: 13:48
  */

@@ -1,6 +1,7 @@
 <?php
 /**
- * 在线文件编辑器 入口文件
+ * 在线文件编辑器
+ * github:https://github.com/yynan555/php_online_coding
  */
 ini_set('max_execution_time', '0');
 

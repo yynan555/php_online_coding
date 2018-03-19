@@ -22,7 +22,7 @@ class UserAuth
     }
     public static function checkAuth($check_value = [])
     {
-    	return self::_allowIp() & self::_allowSession();
+    	return self::_allowIp() && self::_allowSession();
     }
 
     private static function _allowIp()

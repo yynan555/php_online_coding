@@ -405,9 +405,15 @@ class File
     }
 
     // 检测文件路径是否在允许访问域中
-    private static function _checkDomain()
+    // 如果一次请求中需要执行多次_checkDomain, 则需要在执行该函数方法中写一下代码对其值进行修改
+    // $skip_check = &_checkDomain();
+    // $skip_check = false;
+    private static function &_checkDomain()
     {
-        // return true;
+        static $skip_check = false;
+        if($skip_check){
+            return $skip_check;
+        }
         $allow_root_paths = UserAuth::getLimitDir();
         if(empty($allow_root_paths)) CommonFun::respone_json('该用户暂无可访问路径','',199);
 
@@ -423,9 +429,10 @@ class File
                     continue 2;
                 }
             }
-            return false;
+            return $skip_check;
         }
-        return true;
+        $skip_check = true;
+        return $skip_check;
 
     }
 }

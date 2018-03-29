@@ -1,7 +1,7 @@
 <pre id="file_area" style="height: 100%;width: 100%;margin:0px auto 0 auto;border-radius:0px; padding:0px;"><?=htmlspecialchars($file_content)?></pre>
 
-<script type="text/javascript" src="<?=STATIC_PATH?>/lib/ace/ace.js"></script>
-<script type="text/javascript" src="<?=STATIC_PATH?>/lib/ace/ext-language_tools.js"></script>
+<script type="text/javascript" src="<?=STATIC_PATH?>/lib/ace/src-min-noconflict/ace.js"></script>
+<script type="text/javascript" src="<?=STATIC_PATH?>/lib/ace/src-min-noconflict/ext-language_tools.js"></script>
 <script>
     var editor;
     var $ = parent.$;
@@ -21,8 +21,11 @@
         // //字体大小
         editor.setFontSize(18);
 
+        // 设置改编辑器的内容
+        // editor.setValue('');
+
         // //设置只读（true时只读，用于展示代码）
-        editor.setReadOnly(false);
+        // editor.setReadOnly(false);
 
         // //自动换行,设置为off关闭
         editor.setOption("wrap", "free");
@@ -74,7 +77,7 @@
             'file_key' : file_key,
             'file_content' : file_content
         };
-        $.post('<?=BATH_URL?>/index.php?a=save_file',data,function(respone_data){
+        $.post('<?=BASE_URL?>/index.php?a=save_file',data,function(respone_data){
             if(respone_data.error_no === 0){
                 file_key = respone_data.data.file_key;
                 parent.$("#min_title_list .active").removeClass('red_color');

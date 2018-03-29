@@ -20,14 +20,7 @@
 <aside class="Hui-aside" style="top:0px; padding-top:0px">
     <div >
         <button class="btn btn-primary-outline radius size-MINI" onclick="reload_tree()">刷新目录</button>
-        <a class="btn btn-primary-outline radius size-MINI" href='<?=BATH_URL?>/index.php?a=logout' >退出登录</a>
-    </div>
-    <div>
-        <div class="panel panel-default">
-            <div class="panel-header">当前选中路径
-                <button class="btn size-MINI" id="btn_uploadfile" style="float: right;">上传文件</button></div>
-            <div id='new_select_path'  class="panel-body">访问域根路径</div>
-        </div>
+        <a class="btn btn-primary-outline radius size-MINI" href='<?=BASE_URL?>/index.php?a=logout' >退出登录</a>
     </div>
     <div class="" id="tree"></div>
 </aside>
@@ -51,8 +44,9 @@
 <script type="text/javascript" src="<?=STATIC_PATH?>/lib/layer/2.4/layer.js"></script>
 
 <script type="text/javascript">
-var base_url = '<?=BATH_URL?>';
+var base_url = '<?=BASE_URL?>';
 </script>
 <script type="text/javascript" src="<?=STATIC_PATH?>/js/index.js"></script>
+<script type="text/javascript" src="<?=STATIC_PATH?>/js/jstree.js"></script>
 </body>
 </html>

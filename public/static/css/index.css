@@ -51,3 +51,6 @@ pre {margin:0px auto 0 auto;border-radius:0px; padding:0px;}
 	-khtml-opacity: 0;
 	opacity: 0;
 }
+.dislpayArrow a{
+	width: 10px;
+}

@@ -1,49 +1,60 @@
 <?php
 namespace App;
 
-use \Lib\CommonFun;
+use \Core\CommonFun;
 use \Core\UserAuth;
+use \Core\File;
+use \Core\Jstree;
+use \Core\Config;
 
 class Controller
 {
-    private $file_obj;
-
-    public function __construct()
+    // 访问首页
+    public function index()
     {
-        $this->file_obj = new \Lib\File();
+        CommonFun::view('index');
     }
     // 获取文件
-    public function get_file($file_path){
-        $this->file_obj->set_path($file_path);
-        $file_info = $this->file_obj->get_file_info();
-        if( isset( $file_info['extension']) && stripos(\lib\Config::get('app.unable_suffix'), $file_info['extension']) !== false ){
+    public function get_file($file_path)
+    {
+        $file_info = File::getFileInfo($file_path);
+        if( isset( $file_info['extension']) && stripos(\Core\Config::get('app.unable_suffix'), $file_info['extension']) !== false ){
             echo '该文件不可编辑';
             exit;
-        }else if( isset( $file_info['extension']) && stripos(\lib\Config::get('app.img_suffix'), $file_info['extension']) !== false ){
+        }
+
+        $file_content = File::getFileContent($file_path);
+
+        if( isset( $file_info['extension']) && stripos(\Core\Config::get('app.img_suffix'), $file_info['extension']) !== false ){
             //输出图片
             header('Content-type: image/'.$file_info['extension']);
-            echo file_get_contents($this->file_obj->deal_path($file_path));
+            echo $file_content;
             exit;
         }
-        $file_key = $this->file_obj->get_file_key();
-        $file_content = $this->file_obj->get_file_content();
+        $file_key = File::getFileKey($file_path);
 
         CommonFun::view('file_content',compact('file_path','file_content','file_key','file_info'));
     }
     // 保存文件
-    public function save_file($file_path,$file_key,$file_content=''){
-        $this->file_obj->set_path($file_path);
-
-        if( $new_file_key = $this->file_obj->file_save($file_key, $file_content) ){
-            $file_key = $new_file_key;
+    public function save_file($file_path,$file_key,$file_content='')
+    {
+        if( File::checkFileKey($file_path,$file_key) && File::setFileContent($file_path, $file_content) ){
+            $file_key = File::getFileKey($file_path);
             CommonFun::respone_json('success',compact('file_key'));
+        }else{
+            CommonFun::respone_json('写入文件 ['.$file_path.'] 失败,未知错误','',200);
         }
     }
     // 获取目录列表
     public function dir_list($dir_name = '')
     {
-        $this->file_obj->set_path($dir_name);
-        CommonFun::arr2Json($this->file_obj->get_dir());
+        if(empty($dir_name)){
+            $dir_name = UserAuth::getLimitDir();
+        }
+        if( empty($dir_name) ){
+            CommonFun::arr2Json(Jstree::format_item('该用户没有可访问文件',null,false,'folder'));
+        }
+        CommonFun::arr2Json(Jstree::getDir($dir_name));
     }
 
     // 文件目录相关操作
@@ -51,16 +62,14 @@ class Controller
     // 删除一个节点
     public function delete_node($path, $type)
     {
-        $this->file_obj->set_path($path);
-        $path = $this->file_obj->deal_path($path);
         if($type == 'file'){
-            if($this->file_obj->delete_file()){
+            if(File::deleteFile($path)){
                 CommonFun::respone_json("删除文件[$path]成功");
             }else{
                 CommonFun::respone_json("删除文件[$path]失败",'',300);
             }
         }else if($type == 'folder'){
-            if($this->file_obj->delete_dir( $path )){
+            if(File::deleteDir( $path )){
                 CommonFun::respone_json("删除目录[$path]成功");
             }else{
                 CommonFun::respone_json("删除目录[$path]失败",'',301);
@@ -72,16 +81,14 @@ class Controller
     // 新建一个节点
     public function create_node($type, $path, $name)
     {
-        $this->file_obj->set_path($path);
-
         if($type == 'folder'){
-            if( $new_path = $this->file_obj->create_dir($name) ){
+            if( $new_path = File::createDir($path.'/'.$name) ){
                 CommonFun::respone_json("创建目录[$name]成功",['new_path'=>$new_path]);
             }else{
                 CommonFun::respone_json("创建目录[$name]失败",'',200);
             }
         }else if($type == 'file'){
-            if( $new_path = $this->file_obj->create_file($name) ){
+            if( $new_path = File::createFile($path.'/'.$name) ){
                 CommonFun::respone_json("创建文件[$name]成功",['new_path'=>$new_path]);
             }else{
                 CommonFun::respone_json("创建文件[$name]失败");
@@ -92,8 +99,7 @@ class Controller
     }
     public function rename_node($path, $name)
     {
-        $this->file_obj->set_path($path);
-        if($new_path = $this->file_obj->rename($name)){
+        if($new_path = File::renameFileOrDir($path,$name)){
             CommonFun::respone_json("重命名[$name]成功",['new_path'=>$new_path]);
         }else{
             CommonFun::respone_json("重命名[$name]失败",'',200);
@@ -101,8 +107,7 @@ class Controller
     }
     public function move_node($old_path, $move_path)
     {
-        $this->file_obj->set_path($old_path);
-        if($new_path = $this->file_obj->move_file($move_path)){
+        if($new_path = File::moveFileOrDir($old_path, $move_path)){
             CommonFun::respone_json("移动到[$move_path]成功",['new_path'=>$move_path]);
         }else{
             CommonFun::respone_json("移动到[$move_path]失败",'',200);
@@ -110,15 +115,14 @@ class Controller
     }
     public function copy_node($from_path , $to_path , $type)
     {
-        $this->file_obj->set_path($from_path);
         if($type == 'folder'){
-            if( $new_path = $this->file_obj->copy_dir($to_path) ){
+            if( $new_path = File::copyDir($from_path, $to_path) ){
                 CommonFun::respone_json("复制目录到[$to_path]成功");
             }else{
                 CommonFun::respone_json("复制目录到[$to_path]失败",'',200);
             }
         }else if($type == 'file'){
-            if( $new_path = $this->file_obj->copy_file($to_path) ){
+            if( $new_path = File::copyFile($from_path, $to_path) ){
                 CommonFun::respone_json("复制文件到[$to_path]成功");
             }else{
                 CommonFun::respone_json("复制文件到[$to_path]失败");
@@ -126,16 +130,6 @@ class Controller
         }else{
             CommonFun::respone_json("类型 [$type] 无法复制",'',200);
         }
-    }
-
-    // 登录及退出登录
-    public function login($password='')
-    {
-        UserAuth::login($password);
-    }
-    public function logout()
-    {
-        UserAuth::logout();
     }
 
     // 上传文件展示页面
@@ -147,9 +141,8 @@ class Controller
     public function upload_file($path)
     {
         if(!count($_FILES)){
-            CommonFun::respone_json("服务器未接收到文件",'',600);
+            CommonFun::respone_json("服务器未接收到文件或文件过大",'',600);
         }
-        $this->file_obj->set_path($path);
         $fail_file = [];
         foreach($_FILES as $key => $file){
             if( strpos($key,'/') !== false ){
@@ -157,7 +150,7 @@ class Controller
             }else{
                 $new_path = $path;
             }
-            if(!$this->file_obj->upload_file($new_path, $file)){
+            if(!File::uploadFile($new_path, $file)){
                 array_push($fail_file,$key);
             }
         }

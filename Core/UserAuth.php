@@ -1,11 +1,27 @@
 <?php
 namespace Core;
 
-use \Lib\CommonFun;
-use \Lib\Config;
+use \Core\CommonFun;
+use \Core\Config;
 
 class UserAuth
-{
+{    
+	// 检测用户是否合法
+    public static function checkAuth($check_value = [])
+    {
+    	$action = CommonFun::params('a','');
+        
+    	if( !(self::_allowIp() && self::_allowSession()) ){
+    		if( $action == 'login' ){
+    			self::login(CommonFun::params('password',''));
+    		}else{
+    			CommonFun::view('login');
+    		}
+    	}elseif($action == 'logout'){
+            self::logout();
+        }
+    }
+    // 登录
     public static function login($password)
     {
     	if( Config::get('app.password')  == $password){
@@ -15,16 +31,19 @@ class UserAuth
             CommonFun::view('login',['error_msg'=>'密码错误']);
         }
     }
+    // 登出
     public static function logout()
     {
         unset($_SESSION['token']);
         echo '退出成功 返回<a href="'.CommonFun::url().'">登录页面</a>';
-    }
-    public static function checkAuth($check_value = [])
-    {
-    	return self::_allowIp() && self::_allowSession();
+        exit;
     }
 
+    // 获取当前登录用户允许访问根文件夹
+    public static function getLimitDir()
+    {
+    	return Config::get('app.edit_limit_dir');
+    }
     private static function _allowIp()
     {
     	$now_user_ip = self::get_ip();
@@ -33,7 +52,7 @@ class UserAuth
     		return true;
     	}
     	
-    	foreach($allow_ip as $ip){
+    	foreach((array)$allow_ip as $ip){
 	    	if(self::ip_in_network($now_user_ip,$ip)){
 	    		return true;
 	    	}
@@ -97,5 +116,5 @@ class UserAuth
 	    }
 
 	    return $realip;
-	}    
+	}
 }

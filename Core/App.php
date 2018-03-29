@@ -1,7 +1,7 @@
 <?php
 namespace Core;
 
-use \Lib\CommonFun;
+use \Core\CommonFun;
 use \Core\UserAuth;
 
 class App
@@ -10,16 +10,11 @@ class App
     {
         session_start();
 
-        $action = CommonFun::params('a');
+        $action = CommonFun::params('a','index');
+        
         // 身份验证
-        if(!UserAuth::checkAuth() && $action != 'login'){
-           CommonFun::view('login');
-        }
+        UserAuth::checkAuth();
 
-        // 默认进入显示页面
-        if(empty($action) && !CommonFun::is_ajax()){
-            CommonFun::view('index');
-        }
         // 执行方法
         self::exec('\App\Controller',$action);
     }

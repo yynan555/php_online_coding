@@ -6,9 +6,58 @@ use \Core\UserAuth;
 use \Core\File;
 use \Core\Jstree;
 use \Core\Config;
+use \Core\Log;
 
 class Controller
 {
+    // 代码执行之前方法
+    public function beforeFun($action_name,$args)
+    {
+        // 日志记录
+        if($action_name === 'login') unset($args['password']);
+        if( $action_name === 'set_password' ){
+            $args = [];
+        }
+        Log::write($action_name."\t".json_encode($args));
+
+        // 身份验证
+        if(!UserAuth::checkAuth()){
+            if($action_name !== 'login') CommonFun::view('login');
+        }
+        
+        // 如果变量中存在path 需要判断其是否在合法文件域中
+        if(!empty($args)) {
+            foreach($args as $key => $act_param){
+                if(strpos($key,'path') !== false){
+                    if(!UserAuth::checkDomain($act_param)) CommonFun::respone_json("访问路径域错误",'',1000);
+                }
+            }
+        }
+    }
+    public function login($username='', $password = '')
+    {
+        UserAuth::login($username,$password);
+    }
+    public function logout()
+    {
+        UserAuth::logout();
+        CommonFun::view('login',['error_msg'=>'退出成功']);
+    }
+    // 设置密码
+    public function set_password()
+    {
+        $old_password = CommonFun::params('old_password','');
+        $new_password = CommonFun::params('new_password','');
+        $new_password2 = CommonFun::params('new_password2','');
+
+        if(empty($old_password) ||empty($new_password) ||empty($new_password2) ) CommonFun::view('user_set_password');
+
+        if($new_password !== $new_password2)  CommonFun::view('user_set_password',['error_msg'=>'两次输入密码不正确']);
+        if(UserAuth::setPassword($old_password, $new_password)){
+            UserAuth::logout();
+            CommonFun::view('login',['error_msg'=>'修改密码成功']);
+        }
+    }
     // 访问首页
     public function index()
     {
@@ -46,15 +95,15 @@ class Controller
         }
     }
     // 获取目录列表
-    public function dir_list($dir_name = '')
+    public function dir_list($dir_path = '')
     {
-        if(empty($dir_name)){
-            $dir_name = UserAuth::getLimitDir();
+        if(empty($dir_path)){
+            $dir_path = UserAuth::getLimitDir();
         }
-        if( empty($dir_name) ){
+        if( empty($dir_path) ){
             CommonFun::arr2Json(Jstree::format_item('该用户没有可访问文件',null,false,'folder'));
         }
-        CommonFun::arr2Json(Jstree::getDir($dir_name));
+        CommonFun::arr2Json(Jstree::getDir($dir_path));
     }
 
     // 文件目录相关操作

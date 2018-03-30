@@ -20,6 +20,7 @@
 <aside class="Hui-aside" style="top:0px; padding-top:0px">
     <div >
         <button class="btn btn-primary-outline radius size-MINI" onclick="reload_tree()">刷新目录</button>
+        <a class="btn btn-primary-outline radius size-MINI" href='<?=BASE_URL?>/index.php?a=set_password' >修改密码</a>
         <a class="btn btn-primary-outline radius size-MINI" href='<?=BASE_URL?>/index.php?a=logout' >退出登录</a>
     </div>
     <div class="" id="tree"></div>

@@ -9,7 +9,7 @@ $(function () {
                         if('#' == node.id){
                             dir_name = '';
                         }
-                        return { 'dir_name' : dir_name };
+                        return { 'dir_path' : dir_name };
                     }
                 },
                 'check_callback' : function(o, n, p, i, m) {

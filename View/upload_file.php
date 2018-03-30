@@ -51,8 +51,6 @@
     // 待上传文件的服务器文件夹路径
     var new_path = '<?=$dir_path?>';
     var base_url = '<?=BASE_URL?>';
-    // 当前正在上传文件的数量
-    var new_uploading_file_num = 0;
 
     $(function(){
       $(".input_files").change(function(){

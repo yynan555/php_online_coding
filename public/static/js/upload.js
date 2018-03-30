@@ -2,14 +2,12 @@
 function upload_file()
 {
     // 判断当前可上传文件队列是否存在 && 当前上传文件是否小于2(允许同时上传数)
-    if( !files || (files.length <= 0) || (new_uploading_file_num > 2) ){
+    if( !files || (files.length <= 0) ){
         parent.reload_tree(new_path);
         return false;
     }
     // 从待上传列表中选择一条未进行上传的文件
     file_obj = files.shift();
-    // 为当前上传文件数+1
-    new_uploading_file_num++;
     // 执行上传, success: 上传数-1;再次执行upload_file
     //          faild:  上传数-1; 将当前上传文件标记为上传失败; 再次执行upload_file
     setFileShowContent(file_obj.RelativePath,'上传中');
@@ -23,7 +21,6 @@ function upload_file()
             setFileShowContent(file_obj.RelativePath,'上传失败');
             parent.msg('上传失败 :['+data.msg+']',3000,2);
         }
-        new_uploading_file_num--;
         $('#now_num').html(parseInt($('#now_num').html()) -1);
         upload_file();
     },function(){
@@ -74,7 +71,7 @@ function file_item_fromat(file_obj)
 {
     // 计算当前文件大小
     var now_file_size = Math.round(parseFloat(file_obj.size/(1024*1024))*10000)/10000;
-    return '<tr file_name='+file_obj.RelativePath+'><th>'+file_obj.RelativePath+'</th><td>'+now_file_size+'</td><td class="status">等待</td></tr>';
+    return '<tr file_name="'+file_obj.RelativePath+'"><td>'+file_obj.RelativePath+'</td><td>'+now_file_size+'</td><td class="status">等待</td></tr>';
 }
 // 清理待上传文件域
 function clear_files()

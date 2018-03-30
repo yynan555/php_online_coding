@@ -128,5 +128,45 @@ class CommonFun
         call_user_func_array('array_multisort', $args);
         return array_pop($args);
     }
+    
+    /**
+     * 如果是win系统, 处理路径
+     * @param $path
+     * @param bool $G2U 国标码转为UTF-8
+     * @return bool|mixed|string
+     */
+    public static function dealPath($path, $type = '')
+    {
+        static $is_win;
+        if($is_win === null){
+            $is_win = (strtoupper(substr(PHP_OS,0,3))==='WIN')?true:false;
+        }
+        if(!$is_win){
+            return $path;
+        }
 
+        $path = str_replace("\\",'/',$path);
+
+        if($type == 'u2g'){
+            $path = self::iconv_to($path,'UTF-8','GBK');
+        }else if($type == 'g2u'){
+            $path = self::iconv_to($path,'GBK','UTF-8');
+        }
+        return $path;
+    }
+    public static function iconv_to($str,$from,$to){
+        if (!function_exists('iconv')){
+            return $str;
+        }
+
+        if(function_exists('mb_convert_encoding')){
+            $result = @mb_convert_encoding($str,$to,$from);
+        }else{
+            $result = @iconv($from, $to, $str);
+        }
+        if(strlen($result)==0){ 
+            return $str;
+        }
+        return $result;
+    }
 }

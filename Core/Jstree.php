@@ -1,8 +1,6 @@
 <?php
 namespace Core;
 
-use \Core\CommonFun;
-use \Core\Config;
 use \Core\File;
 /**
  * 文件操作类 
@@ -20,8 +18,11 @@ class Jstree
         if(is_array($dir_path)){ // 如果没有指定访问的目录,则访问当前用户的所有目录
             $result = [];
             foreach((array)$dir_path as $dir_item){
-            	// $result[] = self::_getFormatDir($dir_item);
-            	$result[] = self::format_item($dir_item,$dir_item,true,'folder');
+                if(is_file(CommonFun::dealPath($dir_item,'u2g'))){
+                    $result[] = self::format_item($dir_item,$dir_item,false,'file');
+                }else{
+                    $result[] = self::format_item($dir_item,$dir_item,true,'folder');
+                }
             }
             return $result;
         }else{

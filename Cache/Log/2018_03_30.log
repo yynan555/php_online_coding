@@ -1,0 +1,5 @@
+[2018-03-30 19:01:44]	null	(::1)	index	[]
+[2018-03-30 19:01:48]	null	(::1)	login	{"username":"admin"}
+[2018-03-30 19:01:48]	admin	(::1)	index	[]
+[2018-03-30 19:01:49]	admin	(::1)	dir_list	[]
+[2018-03-30 19:01:49]	admin	(::1)	dir_list	{"dir_path":"D:\/WWW\/test"}

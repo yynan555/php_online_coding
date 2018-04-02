@@ -22,8 +22,8 @@ class Log
 	{
 		$content_arr = [
 			'['.date('Y-m-d H:i:s',time()).']',
-			(isset($_SESSION) && isset($_SESSION[UserAuth::SESSION_PREFIX.'username']) )? $_SESSION[UserAuth::SESSION_PREFIX.'username']:'null',
-			'('.UserAuth::get_ip().')',
+			(isset($_SESSION) && (UserAuth::session('username')) )? UserAuth::session('username'):'null',
+			'('.UserAuth::session('address').')',
 			$content
 		];
 		$content = implode("\t", $content_arr);

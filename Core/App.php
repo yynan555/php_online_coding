@@ -13,7 +13,6 @@ class App
         date_default_timezone_set("Asia/Shanghai");
 
         $action = CommonFun::params('a','index');
-
         // 执行方法
         self::exec('\App\Controller',$action);
     }

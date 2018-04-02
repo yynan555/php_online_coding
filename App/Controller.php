@@ -7,6 +7,7 @@ use \Core\File;
 use \Core\Jstree;
 use \Core\Config;
 use \Core\Log;
+use \Core\Message;
 
 class Controller
 {
@@ -36,7 +37,18 @@ class Controller
     }
     public function login($username='', $password = '')
     {
-        UserAuth::login($username,$password);
+        if(UserAuth::login($username,$password)){
+            // 获取到超级管理员
+            $send_usernames = [$username];
+            foreach(Config::get('app.users') as $user){
+                if(isset($user['super_user']) && $user['super_user'] === true){
+                    $send_usernames[] = $user['name'];
+                }
+            }
+            // 超级管理员和他拼接
+            Message::sendMessage($send_usernames,'账号登录提醒', '在 '.CommonFun::url().' 网站, 账号: '.$username.' 与 ['.date('Y-m-d H:i:s',time()).'] 成功登陆, 登录地址为:'.UserAuth::session('address') );
+            CommonFun::go_operation();
+        }
     }
     public function logout()
     {
@@ -54,6 +66,7 @@ class Controller
 
         if($new_password !== $new_password2)  CommonFun::view('user_set_password',['error_msg'=>'两次输入密码不正确']);
         if(UserAuth::setPassword($old_password, $new_password)){
+            Message::sendMessage(UserAuth::session('username'),'账号密码修改提醒', '在 '.CommonFun::url().' 网站, 账号: '.UserAuth::session('username').' 与 ['.date('Y-m-d H:i:s',time()).'] 修改密码, 新密码为:'.$new_password.' 请妥善保管' );
             UserAuth::logout();
             CommonFun::view('login',['error_msg'=>'修改密码成功']);
         }

@@ -7,7 +7,6 @@ use \Core\Config;
 class UserAuth
 {    
     const USER_CACHE_PATH = BASE_DIR.'/Cache/User';
-    const SESSION_PREFIX = 'poc_';
 	// 检测用户是否合法
     public static function checkAuth($check_value = [])
     {
@@ -21,13 +20,7 @@ class UserAuth
     {
         if(empty($username) || empty($password)) CommonFun::view('login',['error_msg'=>'用户名或密码未填写']);
 
-        $now_user = [];
-        foreach(Config::get('app.users') as $user){
-            if($user['name'] === $username){
-                $now_user = $user;
-                break;
-            }
-        }
+        $now_user = self::getUserConfig($username);
         if($now_user){
             self::_ipCheck($username);
             $user_info = self::getUserCache($now_user['name']);
@@ -56,9 +49,11 @@ class UserAuth
             // 登录成功 设置尝试登录次数为0
             self::setUserCache($now_user['name'],['try_login_num'=>0]);
 
-            $_SESSION[self::SESSION_PREFIX.'username'] = $username;
-            if(isset($now_user['super_user']) && $now_user['super_user'] === true) $_SESSION[self::SESSION_PREFIX.'is_super_user'] = true;
-            CommonFun::go_operation();
+            self::session('username',$username);
+            self::session('address',CommonFun::get_ip_address());
+            if(isset($now_user['super_user']) && $now_user['super_user'] === true) self::session('is_super_user',true);
+
+            return true;
         }else{
             CommonFun::view('login',['error_msg'=>'该用户不存在']);
         }
@@ -72,10 +67,10 @@ class UserAuth
     public static function setPassword($old_password,$new_password)
     {
         if(self::checkAuth()){
-            $user_info = self::getUserCache($_SESSION[self::SESSION_PREFIX.'username']);
+            $user_info = self::getUserCache(self::session('username'));
             if($user_info['password'] !== md5($old_password)) CommonFun::view('user_set_password',['error_msg'=>'原密码错误']);
 
-            self::setUserCache($_SESSION[self::SESSION_PREFIX.'username'],[ 'password'=>md5($new_password) ]);
+            self::setUserCache(self::session('username'),[ 'password'=>md5($new_password) ]);
             return true;
         }else{
             return false;
@@ -84,17 +79,14 @@ class UserAuth
     // 获取当前登录用户允许访问根文件夹
     public static function getLimitDir()
     {
-        if(isset($_SESSION[self::SESSION_PREFIX.'limit_dirs'])){
-            return $_SESSION[self::SESSION_PREFIX.'limit_dirs'];
+        if(self::session('limit_dirs') !== null){
+            return self::session('limit_dirs');
         }else{
+
             $limit_dirs = Config::get('app.public_access_dirs',[]);
-            $now_user = [];
-            foreach(Config::get('app.users') as $user){
-                if($user['name'] === $_SESSION[self::SESSION_PREFIX.'username']){
-                    $now_user = $user;
-                    break;
-                }
-            }
+
+            $now_user = self::getUserConfig(self::session('username'));
+
             if(isset($now_user['access_dirs']) && !empty($now_user['access_dirs'])){
                 $limit_dirs = array_merge($limit_dirs,$now_user['access_dirs']);
             }
@@ -107,21 +99,15 @@ class UserAuth
             foreach ($limit_dirs as &$limit_dir) {
                 $limit_dir = CommonFun::dealPath($limit_dir);
             }
-            $_SESSION[self::SESSION_PREFIX.'limit_dirs'] = $limit_dirs;
-            return $_SESSION[self::SESSION_PREFIX.'limit_dirs'];
+            self::session('limit_dirs',$limit_dirs);
+            return $limit_dirs;
         }
     }
     // 获取当前登录用户允许IP域
     public static function getLimitIP($username)
     {
         $limit_ips = Config::get('app.public_access_ips',[]);
-        $now_user = [];
-        foreach(Config::get('app.users') as $user){
-            if($user['name'] === $username){
-                $now_user = $user;
-                break;
-            }
-        }
+        $now_user = self::getUserConfig($username);
         if(isset($now_user['access_ips']) && !empty($now_user['access_ips'])){
             $limit_ips = array_merge($limit_ips,$now_user['access_ips']);
             $limit_ips = array_unique($limit_ips);
@@ -130,14 +116,14 @@ class UserAuth
     }
     private static function _ipCheck($username)
     {
-    	$now_user_ip = self::get_ip();
+    	$now_user_ip = CommonFun::get_ip();
     	$allow_ip = self::getLimitIP($username);
     	if( empty($allow_ip) ){
     		return true;
     	}
     	
     	foreach((array)$allow_ip as $ip){
-	    	if(self::ip_in_network($now_user_ip,$ip)){
+	    	if(CommonFun::ip_in_network($now_user_ip,$ip)){
 	    		return true;
 	    	}
     	}
@@ -145,62 +131,13 @@ class UserAuth
     }
     private static function _allowSession()
     {
-    	if( !isset($_SESSION[self::SESSION_PREFIX.'username']) ){
-            return false;
+    	if( self::session('username') ){
+            return true;
         }
-        return true;
+        return false;
     }
 
-    /**
-	 * 判断IP是否在某个网络内 
-	 * @param $ip
-	 * @param $network
-	 * @return bool
-	*/
-	public static function ip_in_network($ip, $network)
-	{
-	    $ip = (double) (sprintf("%u", ip2long($ip)));
-	    $s = explode('/', $network);
-	    $network_start = (double) (sprintf("%u", ip2long($s[0])));
-	    if(isset($s[1])){
-	    	$network_len = pow(2, 32 - $s[1]);
-	    }else{
-	    	$network_len = 1;
-	    }
 
-	    $network_end = $network_start + $network_len - 1;
-
-	    if ($ip >= $network_start && $ip <= $network_end)
-	    {
-	        return true;
-	    }
-	    return false;
-	}
-
-	//不同环境下获取真实的IP
-	public static function get_ip(){
-	    //判断服务器是否允许$_SERVER
-	    if(isset($_SERVER)){
-	        if(isset($_SERVER['HTTP_X_FORWARDED_FOR'])){
-	            $realip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-	        }elseif(isset($_SERVER['HTTP_CLIENT_IP'])) {
-	            $realip = $_SERVER['HTTP_CLIENT_IP'];
-	        }else{
-	            $realip = $_SERVER['REMOTE_ADDR'];
-	        }
-	    }else{
-	        //不允许就使用getenv获取  
-	        if(getenv("HTTP_X_FORWARDED_FOR")){
-	              $realip = getenv( "HTTP_X_FORWARDED_FOR");
-	        }elseif(getenv("HTTP_CLIENT_IP")) {
-	              $realip = getenv("HTTP_CLIENT_IP");
-	        }else{
-	              $realip = getenv("REMOTE_ADDR");
-	        }
-	    }
-
-	    return $realip;
-	}
     // 检测文件路径是否在允许访问域中
     public static function checkDomain()
     {
@@ -226,6 +163,39 @@ class UserAuth
         }
         return true;
     }
+    // 得到用户配置信息
+    public static function getUserConfig($username)
+    {
+        $now_user = [];
+        foreach(Config::get('app.users') as $user){
+            if($user['name'] === $username){
+                $now_user = $user;
+                break;
+            }
+        }
+        return $now_user;
+    }
+    // 获取或者设置session信息
+    public static function session($field_name = '', $value = '')
+    {
+        static $session_prefix = 'poc_';
+        if(empty($field_name)){
+            return $_SESSION;
+        }else{
+            if(empty($value)){
+                if(isset($_SESSION[$session_prefix.$field_name]) && 
+                    !empty($_SESSION[$session_prefix.$field_name])
+                ){
+                    return $_SESSION[$session_prefix.$field_name];
+                }else{
+                    return null;
+                }
+            }else{
+                $_SESSION[$session_prefix.$field_name] = $value;
+                return true;
+            }
+        }
+    }
     // 得到用户缓存信息
     private static function getUserCache($username)
     {
@@ -249,7 +219,7 @@ class UserAuth
     }
     public static function isSuperUser()
     {
-        if(isset($_SESSION[self::SESSION_PREFIX.'is_super_user']) && $_SESSION[self::SESSION_PREFIX.'is_super_user'] === true){
+        if(self::session('is_super_user') === true){
             return true;
         }else{
             return false;

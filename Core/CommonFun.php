@@ -169,4 +169,69 @@ class CommonFun
         }
         return $result;
     }
+
+    /**
+     * 判断IP是否在某个网络内 
+     * @param $ip
+     * @param $network
+     * @return bool
+    */
+    public static function ip_in_network($ip, $network)
+    {
+        $ip = (double) (sprintf("%u", ip2long($ip)));
+        $s = explode('/', $network);
+        $network_start = (double) (sprintf("%u", ip2long($s[0])));
+        if(isset($s[1])){
+            $network_len = pow(2, 32 - $s[1]);
+        }else{
+            $network_len = 1;
+        }
+
+        $network_end = $network_start + $network_len - 1;
+
+        if ($ip >= $network_start && $ip <= $network_end)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public static function get_ip_address($ip = ''){
+        if(empty($ip)){
+            $ip = self::get_ip();
+        }
+        $request_ip_url = 'http://ip.taobao.com/service/getIpInfo.php?ip='.$ip;
+
+        $ip_info = json_decode(file_get_contents($request_ip_url),true);
+
+        if($ip_info && isset($ip_info['code']) && $ip_info['code'] == 0){
+            return $ip_info['data']['region'].$ip_info['data']['city'].$ip_info['data']['county'].' '.$ip_info['data']['isp'];
+        }else{
+            return $ip;
+        }
+    }
+    //不同环境下获取真实的IP
+    public static function get_ip(){
+        //判断服务器是否允许$_SERVER
+        if(isset($_SERVER)){
+            if(isset($_SERVER['HTTP_X_FORWARDED_FOR'])){
+                $realip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+            }elseif(isset($_SERVER['HTTP_CLIENT_IP'])) {
+                $realip = $_SERVER['HTTP_CLIENT_IP'];
+            }else{
+                $realip = $_SERVER['REMOTE_ADDR'];
+            }
+        }else{
+            //不允许就使用getenv获取  
+            if(getenv("HTTP_X_FORWARDED_FOR")){
+                  $realip = getenv( "HTTP_X_FORWARDED_FOR");
+            }elseif(getenv("HTTP_CLIENT_IP")) {
+                  $realip = getenv("HTTP_CLIENT_IP");
+            }else{
+                  $realip = getenv("REMOTE_ADDR");
+            }
+        }
+
+        return $realip;
+    }
 }

@@ -34,6 +34,15 @@ $(function () {
                             uploadFile();
                         }
                     };
+                    tmp.download = {
+                        "label":"Download",
+                        "action":function(data){
+                            var inst = $.jstree.reference(data.reference);
+                            var obj = inst.get_node(data.reference);
+                            var path = obj.id;
+                            global_downloadByUrl(base_url+'/index.php?a=download_file_or_dir&path='+path);
+                        }
+                    };
                     delete tmp.create.action;
                     tmp.create.label = "New";
                     tmp.create.submenu = {

@@ -215,7 +215,7 @@ class UserAuth
             $info = array_merge($user_old_info, $info);
         }
 
-        File::setFileContent($usercache_filename, json_encode($info));
+        File::setFileContent($usercache_filename, json_encode($info,JSON_UNESCAPED_UNICODE));
     }
     public static function isSuperUser()
     {

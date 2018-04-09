@@ -15,13 +15,16 @@ class File
      */
     public static function createFile($file_path)
     {
-        $file_path = CommonFun::dealPath($file_path, 'u2g');
-        if(is_file($file_path)){
+        $_file_path = CommonFun::dealPath($file_path, 'u2g');
+        if(is_file($_file_path)){
             return false;
         }else{
-            $fp=fopen($file_path,"w+");
+            $dir_path = dirname($file_path);
+            self::createDir($dir_path);
+
+            $fp=fopen($_file_path,"w+");
             fclose($fp);
-            return CommonFun::dealPath($file_path,'g2u');
+            return $file_path;
         }
     }
 
@@ -90,7 +93,7 @@ class File
                 return false; 
             } 
         } else { 
-            CommonFun::respone_json("未找到该文件 $file_path ",'',103);
+            return false;
         } 
     }
     // 上传文件
@@ -113,7 +116,28 @@ class File
             return false;
         }
     }
+    // 下载文件或文件夹
+    public static function downloadFileOrDir($path)
+    {
+        $zip_file_cache_path = BASE_DIR.'/Cache/ZipFile';
 
+        $_path = CommonFun::dealPath($path, 'u2g');
+        if( is_file($_path) ){
+            self::downloadFile($path);
+        }elseif( is_dir($_path) ){
+            // 设置缓存文件名称
+            $zip_file_name = $zip_file_cache_path.'/'.basename($path).'.zip';
+            // 清理缓存文件
+            self::deleteFile($zip_file_name);
+            // 压缩目录
+            self::compressDir($path, $zip_file_name);
+            // 下载
+            self::downloadFile($zip_file_name);
+        }else{
+            CommonFun::respone_json("非文件或目录",'',300);
+        }
+        
+    }
     /**
      * 创建目录
      * @param string 目录名称
@@ -124,7 +148,7 @@ class File
         if(is_dir($dir_path)){
             return false;
         }else{
-            if( !mkdir($dir_path) ){
+            if( !@mkdir($dir_path,0777,true) ){
                 return false;
             }
             return CommonFun::dealPath($dir_path,'g2u');
@@ -159,6 +183,25 @@ class File
         return $result;
     }
 
+    // 获取某文件夹下的所有文件
+    public static function getAllFileByDir($path)
+    {
+        static $fileList = [];
+
+        if(empty($fileList)) $path = CommonFun::dealPath($path, 'g2u');
+
+        if( is_dir($path) ){
+            $childs = scandir($path);
+            foreach($childs as $child){
+                if($child !== '.' && $child !== '..') {
+                    self::getAllFileByDir($path.'/'.$child);
+                }
+            }
+        }else if( is_file($path) ){
+            $fileList[] = $path;
+        }
+        return $fileList;
+    }
     // 复制文件夹
     public static function copyDir($sourceDir, $destDir)
     {
@@ -296,5 +339,58 @@ class File
         return md5( $file_path.filemtime($_file_path) );
     }
 
+    // 下载文件
+    private static function downloadFile($file, $filename='')
+    {
+        if(empty($filename)){
+            $filename = basename($file);//返回路径中的文件名部分。
+        }
+        $_file = CommonFun::dealPath($file,'u2g');
+        /*
+         * header() 函数向客户端发送原始的 HTTP 报头。
+         * 必须在任何实际的输出被发送之前调用 header() 函数
+         * 
+         */
+        header("Content-type: application/octet-stream");
 
+        //处理中文文件名
+        $ua = $_SERVER["HTTP_USER_AGENT"];
+        $encoded_filename = rawurlencode($filename);
+        if (preg_match("/MSIE/", $ua)) {
+            header('Content-Disposition: attachment; filename="' . $encoded_filename . '"');
+        } else if (preg_match("/Firefox/", $ua)) {
+            header("Content-Disposition: attachment; filename*=\"utf8''" . $filename . '"');
+        } else {
+            header('Content-Disposition: attachment; filename="' . $filename . '"');
+        }
+
+        header("Content-Length: ". filesize($_file));
+
+        /*
+         * readfile() 函数输出一个文件。
+         * 该函数读入一个文件并写入到输出缓冲。
+         * 若成功，则返回从文件中读入的字节数。若失败，则返回 false。
+         */
+        ob_clean();
+        flush();
+        readfile($_file);
+    }
+
+    // 压缩文件
+    private static function compressDir($old_path, $new_path){
+        self::createFile($new_path);
+
+        $all_files = self::getAllFileByDir($old_path);
+
+        $dir = dirname($old_path);
+
+        $zip=new \ZipArchive();
+        if($zip->open($new_path, \ZipArchive::OVERWRITE)=== TRUE){
+            foreach ($all_files as $file) {
+                $zip->addFile($file,trim($file,$dir));//调用方法，对要打包的根目录进行操作，并将ZipArchive的对象传递给方法
+            }
+            $zip->close(); //关闭处理的zip文件
+        }
+
+    }
 }

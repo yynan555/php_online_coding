@@ -87,3 +87,15 @@ function global_saveFile(){
         }
     });
 }
+
+// 下载文件
+function global_downloadByUrl(url) {
+    try{ 
+        var elemIF = document.createElement("iframe");   
+        elemIF.src = url;
+        elemIF.style.display = "none";
+        document.body.appendChild(elemIF);
+    }catch(e){ 
+        console.log('download error',e)
+    } 
+}

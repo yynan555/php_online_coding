@@ -8,10 +8,12 @@ use \Core\UserAuth;
 class Log
 {
 	// 日志存放位置
-	const LOG_DIR = BASE_DIR.'/Cache/Log';
+	const LOG_DIR = BASE_DIR.'/Log';
 
 	public static function write($content){
-		$new_log_filepath = self::LOG_DIR.'/'.date('Y_m_d').'.log';
+		$username = (isset($_SESSION) && (UserAuth::session('username')) )? UserAuth::session('username'):'Unknown';
+		$new_log_filepath = self::LOG_DIR.'/'.date('Ym').'/'.date('d_').$username.'.log';
+		
 		if(!is_file(CommonFun::dealPath($new_log_filepath,'u2g'))){
 			File::createFile($new_log_filepath);
 		}
@@ -22,8 +24,7 @@ class Log
 	{
 		$content_arr = [
 			'['.date('Y-m-d H:i:s',time()).']',
-			(isset($_SESSION) && (UserAuth::session('username')) )? UserAuth::session('username'):'null',
-			'('.UserAuth::session('address').')',
+			'('.(empty(UserAuth::session('address'))?CommonFun::get_ip_address():UserAuth::session('address')).')',
 			$content
 		];
 		$content = implode("\t", $content_arr);

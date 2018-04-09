@@ -60,14 +60,15 @@ class Jstree
         ];
     }
     // 设置显示文件
-    private static function _get_file_img($path,$icon)
+    private static function _get_file_img($path,$type)
     {
+        if($type == 'folder') return $type;
         $suffix = pathinfo($path, PATHINFO_EXTENSION);
         if(empty($suffix)){
-            return $icon;
+            return $type;
         }
 
-        $img = $icon;
+        $img = $type;
         $able_icons = 'php js css ico jpg png jpeg gif bmp text txt md log htaccess htm html xml xsl rb pdf as c iso cf cpp cs sql xls xlsx h crt pem cer ppt pptx doc docx zip gz tar rar fla';
 
         if( strpos($able_icons, $suffix) !== false ){

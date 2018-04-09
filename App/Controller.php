@@ -19,7 +19,7 @@ class Controller
         if( $action_name === 'set_password' ){
             $args = [];
         }
-        Log::write($action_name."\t".json_encode($args));
+        Log::write($action_name."\t".json_encode($args,JSON_UNESCAPED_UNICODE));
 
         // 身份验证
         if(!UserAuth::checkAuth()){
@@ -45,8 +45,10 @@ class Controller
                     $send_usernames[] = $user['name'];
                 }
             }
-            // 超级管理员和他拼接
-            Message::sendMessage($send_usernames,'账号登录提醒', '在 '.CommonFun::url().' 网站, 账号: '.$username.' 与 ['.date('Y-m-d H:i:s',time()).'] 成功登陆, 登录地址为:'.UserAuth::session('address') );
+            // 准备内容 发送消息
+            $content =  $username.' 与 ['.date('Y-m-d H:i:s',time()).'] 成功登陆。<br/><br/>来自 '.CommonFun::url().'<br/>地址: '.UserAuth::session('address');
+
+            Message::sendMessage($send_usernames, '账号登录提醒', $content);
             CommonFun::go_operation();
         }
     }
@@ -66,7 +68,11 @@ class Controller
 
         if($new_password !== $new_password2)  CommonFun::view('user_set_password',['error_msg'=>'两次输入密码不正确']);
         if(UserAuth::setPassword($old_password, $new_password)){
-            Message::sendMessage(UserAuth::session('username'),'账号密码修改提醒', '在 '.CommonFun::url().' 网站, 账号: '.UserAuth::session('username').' 与 ['.date('Y-m-d H:i:s',time()).'] 修改密码, 新密码为:'.$new_password.' 请妥善保管' );
+            //内容填写
+            $content = UserAuth::session('username').' 与 ['.date('Y-m-d H:i:s',time()).'] 修改密码。 新密码为:'.$new_password.' 请妥善保管。<br/><br/>来自: '.CommonFun::url().'<br/>地址: '.UserAuth::session('address');
+
+            Message::sendMessage(UserAuth::session('username'),'账号密码修改提醒', $content);
+
             UserAuth::logout();
             CommonFun::view('login',['error_msg'=>'修改密码成功']);
         }
@@ -218,5 +224,10 @@ class Controller
         }
         CommonFun::respone_json("上传文件已完成",['error_list'=>$fail_file]);
 
+    }
+    // 下载文件或文件夹
+    public function download_file_or_dir($path)
+    {
+        File::downloadFileOrDir($path);
     }
 }

@@ -18,12 +18,12 @@ class CommonFun
             $result['data'] = $data;
         }
 
-        exit(json_encode($result));
+        exit(json_encode($result,JSON_UNESCAPED_UNICODE));
     }
     static public function arr2Json($data)
     {
         header('Content-type: text/json');
-        exit(json_encode($data));
+        exit(json_encode($data,JSON_UNESCAPED_UNICODE));
     }
 
     // 跳转到某操作
@@ -205,7 +205,7 @@ class CommonFun
         $ip_info = json_decode(file_get_contents($request_ip_url),true);
 
         if($ip_info && isset($ip_info['code']) && $ip_info['code'] == 0){
-            return $ip_info['data']['region'].$ip_info['data']['city'].$ip_info['data']['county'].' '.$ip_info['data']['isp'];
+            return $ip_info['data']['region'].$ip_info['data']['city'].$ip_info['data']['county'].' '.$ip_info['data']['isp'].' ip: '.$ip;
         }else{
             return $ip;
         }

@@ -183,25 +183,6 @@ class File
         return $result;
     }
 
-    // 获取某文件夹下的所有文件
-    public static function getAllFileByDir($path)
-    {
-        static $fileList = [];
-
-        if(empty($fileList)) $path = CommonFun::dealPath($path, 'g2u');
-
-        if( is_dir($path) ){
-            $childs = scandir($path);
-            foreach($childs as $child){
-                if($child !== '.' && $child !== '..') {
-                    self::getAllFileByDir($path.'/'.$child);
-                }
-            }
-        }else if( is_file($path) ){
-            $fileList[] = $path;
-        }
-        return $fileList;
-    }
     // 复制文件夹
     public static function copyDir($sourceDir, $destDir)
     {
@@ -376,20 +357,42 @@ class File
         readfile($_file);
     }
 
+    // 获取某文件夹下的所有文件
+    public static function getAllFileByDir($base_path, &$file_list ,$abs_path='')
+    {
+        $now_path = $base_path.$abs_path;
+        if( is_dir($now_path) ){
+            $childs = scandir($now_path);
+            foreach($childs as $child){
+                if($child !== '.' && $child !== '..') {
+                    self::getAllFileByDir($base_path, $file_list,$abs_path.'/'.$child);
+                }
+            }
+        }else if( is_file($now_path) ){
+            $file_list[] = $abs_path;
+        }
+    }
     // 压缩文件
     private static function compressDir($old_path, $new_path){
         self::createFile($new_path);
 
-        $all_files = self::getAllFileByDir($old_path);
+        $_old_path = CommonFun::dealPath($old_path, 'g2u');
 
-        $dir = dirname($old_path);
+        $all_files = array();
+        self::getAllFileByDir($_old_path,$all_files);
+        // 判断是否找到文件
+        if( empty($all_files) ) CommonFun::respone_json('未找到文件!','',600);
+
+        $folder_name = basename($old_path);
 
         $zip=new \ZipArchive();
         if($zip->open($new_path, \ZipArchive::OVERWRITE)=== TRUE){
             foreach ($all_files as $file) {
-                $zip->addFile($file,trim($file,$dir));//调用方法，对要打包的根目录进行操作，并将ZipArchive的对象传递给方法
+                $zip->addFile($_old_path.$file,$folder_name.$file);//调用方法，对要打包的根目录进行操作，并将ZipArchive的对象传递给方法
             }
             $zip->close(); //关闭处理的zip文件
+        }else{
+            CommonFun::respone_json('压缩文件失败!','',601);
         }
 
     }

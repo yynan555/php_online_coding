@@ -40,6 +40,11 @@ $(function () {
                             var inst = $.jstree.reference(data.reference);
                             var obj = inst.get_node(data.reference);
                             var path = obj.id;
+
+                            if(obj.type == 'folder'){
+                                msg('正在压缩，请等待。。。',2000,6);
+                            }
+
                             global_downloadByUrl(base_url+'/index.php?a=download_file_or_dir&path='+path);
                         }
                     };

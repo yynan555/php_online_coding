@@ -50,7 +50,7 @@ class CommonFun
                 $base_path = 'http://'.$base_path;
             }
             if( strpos($base_path, 'index.php') !== false){
-                $base_path = preg_replace('#(.*)/+index\.php\?a=(.*)#i', "$1", $base_path);
+                $base_path = preg_replace('#(.*)/+index\.php(.*)#i', "$1", $base_path);
             }
             $base_path = preg_replace('#(.*)/$#', "$1", $base_path);
             $static_url = $base_path;

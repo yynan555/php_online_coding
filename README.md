@@ -12,7 +12,7 @@
 - 引入数据库管理工具(adminer)
 
 # 界面
-[![编辑目录及文件](https://yynan.cn/uploads/images/file.png "编辑目录及文件")](https://yynan.cn/uploads/images/file.png "编辑目录及文件")
+[![编辑目录及文件](https://yynan.cn/uploads/images/php_online_coding.png "php在线代码编辑器")](https://yynan.cn/uploads/images/php_online_coding.png "php在线代码编辑器")
 
 # 如何使用
 - 1，将该项目放到可以被客户端访问的路径中。

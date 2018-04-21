@@ -24,6 +24,8 @@
 #tree .file-fla {  background:url('../images/file_sprite.png') -398px -0px }
 pre {margin:0px auto 0 auto;border-radius:0px; padding:0px;}
 #min_title_list .red_color{ color:red }
+#min_title_list .gray_color{ color:gray }
+
 .Hui-aside {z-index: 98}
 .jstree-contextmenu {z-index:99;}
 #new_select_path {

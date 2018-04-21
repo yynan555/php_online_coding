@@ -9,6 +9,7 @@
 - 用户修改密码
 - 用户操作日志记录
 - 用户登录及修改密码邮件通知
+- 引入数据库管理工具(adminer)
 
 # 如何使用
 - 1，将该项目放到可以被客户端访问的路径中。
@@ -51,4 +52,4 @@
 该项目只是用于学习、开发及测试阶段。安全性，效率等问题还有待提高。
 
 # 感谢
-感谢 [jQuery](https://github.com/jquery/jquery) 、[ace](https://github.com/ajaxorg/ace) 、 [jstree](https://github.com/vakata/jstree) 、 [layer](https://github.com/sentsin/layer) 、[H-ui 前端框架](http://www.h-ui.net/)
+感谢 [jQuery](https://github.com/jquery/jquery) 、[ace](https://github.com/ajaxorg/ace) 、 [jstree](https://github.com/vakata/jstree) 、 [layer](https://github.com/sentsin/layer) 、[H-ui 前端框架](http://www.h-ui.net/) 、[adminer](https://github.com/vrana/adminer)

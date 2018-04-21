@@ -11,6 +11,9 @@
 - 用户登录及修改密码邮件通知
 - 引入数据库管理工具(adminer)
 
+# 界面
+[![编辑目录及文件](https://yynan.cn/uploads/images/file.png "编辑目录及文件")](https://yynan.cn/uploads/images/file.png "编辑目录及文件")
+
 # 如何使用
 - 1，将该项目放到可以被客户端访问的路径中。
 - 2，进入Config/app.php，设置该编辑器可以在线访问的服务器文件夹路径 和 登录密码。（如果是linux系统，需要将该项目 和 需要修改的路径设置权限为777）

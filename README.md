@@ -32,42 +32,25 @@
 # 使用
 - 1，将该项目放到服务器，使其可以被客户端访问的路径中（例如：【你的域名】/php_online_coding）。
 - 2，进入Config/app.php，设置该编辑器可以在线访问的服务器文件夹路径 和 登录密码。（如果是linux系统，需要将该项目 和 需要修改的路径设置权限为777）
-```html
+```php
 	// 用户默认密码, 配置用户后默认使用本密码登录, 之后可以自行修改密码
 	'default_password' => 'admin',
 
-	// 公共访问文件夹
-	'public_access_dirs' => [
-		'D:\WWW\test'
-	],
-
-	//允许访问IP列表(如果空则没有IP限制)例如 某个具体的IP: '127.0.0.1' 或 IP范围'127.0.0.1/24'
-	'public_access_ips' =>[
-	],
-
-	// 用户表 , 配置用户与其相对应的可访问文件和ip
+	// 用户表 , 配置用户与其相对应的可访问文件
 	'users' => [
 		[
 			'name' => 'admin',
-			'access_dirs' => ['D:\WWW\yao要.txt'], // 该用户可以访问的文件夹
-			'access_ips' => [], // 该用户可以进行登录的IP
-			'super_user' => true, //是否可以修改本项目 ,请慎重指定
-			'email' => 'asdif@qq.com'
+			'access_dirs' => ['D:/WWW/test'], // 该用户可以访问的文件夹
+			'super_user' => true, // 是否可以修改本项目 ,请慎重指定(默认有访问数据库权限)
 		],
-		[
-			'name' => '测试账号',
-			'access_dirs' => []
-		],
-	],
-	// 基于stmp 允许发送email 在用户登录的时候会给超级管理员和自己发送邮件, 需配合users中的email进行发送邮件
-	'email_host' => '',
-	'email_username' => '',
-	'email_password' => '',
+	...
+	// 以上为基本功能配置项, 更多功能可以在 Config/app.php 查看对应配置项
 ```
 - 3，在浏览器中访问该项目！。
 
 # 注意
-该项目只是用于学习、开发及测试阶段。安全性，效率等问题还有待提高。
+1. 该项目只是用于学习、开发及测试阶段。安全性，效率等问题还有待提高。
+2. 使用功能详细的配置项功能可以在 Config/app.php 中查看配置
 
 # 感谢
 感谢 [jQuery](https://github.com/jquery/jquery) 、[ace](https://github.com/ajaxorg/ace) 、 [jstree](https://github.com/vakata/jstree) 、 [layer](https://github.com/sentsin/layer) 、[H-ui 前端框架](http://www.h-ui.net/) 、[adminer](https://github.com/vrana/adminer)

@@ -163,10 +163,13 @@ class UserAuth
         }
         return true;
     }
-    // 得到用户配置信息
-    public static function getUserConfig($username)
+    // 得到用户配置信息 ,默认返回当前用户配置
+    public static function getUserConfig($username = '')
     {
         $now_user = [];
+        if(empty($username)){
+            $username = self::session('username');
+        }
         foreach(Config::get('app.users') as $user){
             if($user['name'] === $username){
                 $now_user = $user;
@@ -224,5 +227,17 @@ class UserAuth
         }else{
             return false;
         }
+    }
+    // 是否具有访问数据库的能力
+    public static function accessDatabaseAble(){
+        if(self::isSuperUser()){
+            return true;
+        }else{
+            $now_user_config = self::getUserConfig();
+            if(isset($now_user_config) && isset($now_user_config['access_database_able']) && $now_user_config['access_database_able']){
+                return true;
+            }
+        }
+        return false;
     }
 }

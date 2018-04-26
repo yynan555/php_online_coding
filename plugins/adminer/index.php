@@ -11,6 +11,9 @@ session_start();
 if(!\App\Core\UserAuth::checkAuth()){
 	exit('please login php_online_coding');
 }
+if(!\App\Core\UserAuth::accessDatabaseAble()){
+	exit('no access');
+}
 \App\Core\Log::write('database'."\t".$_SERVER["REQUEST_URI"]);
 
 /** Adminer - Compact database management

@@ -19,11 +19,16 @@
 <body>
 <aside class="Hui-aside" style="top:0px; padding-top:0px">
     <div style="width:190px">
+        当前用户:<?=\App\Core\UserAuth::session('username');?>
+        <hr/>
         <button class="btn btn-primary-outline radius size-MINI" onclick="reload_tree()">刷新目录</button>
+        <?php if(\App\Core\UserAuth::accessDatabaseAble()):?>
         <a class="btn btn-primary-outline radius size-MINI" target="_blank" href='<?=BASE_URL?>/plugins/adminer' >数据库管理</a>
         <br/>
+        <?php endif;?>
         <a class="btn btn-primary-outline radius size-MINI" href='<?=BASE_URL?>/index.php?a=set_password' >修改密码</a>
         <a class="btn btn-primary-outline radius size-MINI" href='<?=BASE_URL?>/index.php?a=logout' >退出登录</a>
+        <hr/>
     </div>
     <div class="" id="tree"></div>
 </aside>

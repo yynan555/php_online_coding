@@ -41,11 +41,11 @@ class Controller
             $send_usernames = [$username];
 
             // 获取到超级管理员, 为其发送登录信息
-            // foreach(Config::get('app.users') as $user){
-            //     if(isset($user['super_user']) && $user['super_user'] === true){
-            //         $send_usernames[] = $user['name'];
-            //     }
-            // }
+            foreach(Config::get('app.users') as $user){
+                if(isset($user['super_user']) && $user['super_user'] === true){
+                    $send_usernames[] = $user['name'];
+                }
+            }
             // 准备内容 发送消息
             $content =  $username.' 与 ['.date('Y-m-d H:i:s',time()).'] 成功登陆。<br/><br/>来自 '.CommonFun::url().'<br/>地址: '.UserAuth::session('address');
 

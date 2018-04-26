@@ -1,5 +1,6 @@
 # php_online_coding
 该项目是以PHP为基础，实现在浏览器中对服务器代码进行在线编辑和查看。
+DEMO地址 : [http://demo.yynan.cn](http://demo.yynan.cn "http://demo.yynan.cn")
 
 # 功能
 - 基于Jstree的文件及文件夹查看、添加、删除、移动、复制操作

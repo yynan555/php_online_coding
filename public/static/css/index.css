@@ -26,7 +26,7 @@ pre {margin:0px auto 0 auto;border-radius:0px; padding:0px;}
 #min_title_list .red_color{ color:red }
 #min_title_list .gray_color{ color:gray }
 
-.Hui-aside {z-index: 98}
+.Hui-aside {z-index: 98; border-right: 5px solid #e5e5e5;top:0px; padding-top:0px;}
 .jstree-contextmenu {z-index:99;}
 #new_select_path {
      padding: 0px !important; 

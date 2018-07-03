@@ -16,7 +16,11 @@
 
         editor.setTheme("ace/theme/" + theme);
         if(language){
-            if(language == 'js') language = 'javascript';
+            if(language == 'js'){
+                language = 'javascript';
+            }elseif(language == 'htm'){
+                language = 'html';
+            }
             editor.session.setMode("ace/mode/" + language);
         }
 

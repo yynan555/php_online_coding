@@ -63,6 +63,7 @@
     var base_url = '<?=BASE_URL?>';
 </script>
 <script type="text/javascript" src="<?= STATIC_PATH ?>/js/index.js"></script>
+<script type="text/javascript" src="<?= STATIC_PATH ?>/js/index_event.js"></script>
 <script type="text/javascript" src="<?= STATIC_PATH ?>/js/jstree.js"></script>
 </body>
 </html>

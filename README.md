@@ -2,6 +2,10 @@
 该项目是以PHP为基础，实现在浏览器中对服务器代码进行在线编辑和查看。
 DEMO地址 : [http://demo.yynan.cn](http://demo.yynan.cn "http://demo.yynan.cn")
 
+# 编辑器快捷键
+搜索批量替换: Ctrl+F => alt+Enter 即可选中全部需要替换的内容
+关闭当前标签: Esc
+
 # 功能
 - 基于Jstree的文件及文件夹查看、添加、删除、移动、复制操作
 - 文件内容在线查看和编辑

@@ -5,6 +5,11 @@ $(window).bind('beforeunload', function(){
 
 // 为页面添加默认键盘事件
 $(window).keydown(function(e) {
+    if (e.keyCode == 27) { // Esc
+        global_closeOpenWindow();
+        e.preventDefault();
+    }
+
     // 全局关闭函数
     if (e.keyCode == 'W'.charCodeAt() && e.ctrlKey) {
         global_closeOpenWindow();

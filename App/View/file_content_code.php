@@ -18,7 +18,7 @@
         if(language){
             if(language == 'js'){
                 language = 'javascript';
-            }elseif(language == 'htm'){
+            }else if(language == 'htm'){
                 language = 'html';
             }
             editor.session.setMode("ace/mode/" + language);
@@ -58,6 +58,13 @@
         editor.commands.addCommand({
             name: 'close',
             bindKey: {win: 'Ctrl-W',  mac: 'Command-W'},
+            exec: function(editor) {
+                parent.global_closeOpenWindow();
+            }
+        });
+        editor.commands.addCommand({
+            name: 'close2',
+            bindKey: {win: 'Esc',  mac: 'Esc'},
             exec: function(editor) {
                 parent.global_closeOpenWindow();
             }

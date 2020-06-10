@@ -3,8 +3,14 @@
 DEMO地址 : [http://demo.yynan.cn](http://demo.yynan.cn "http://demo.yynan.cn")
 
 # 编辑器快捷键
+快捷键帮助: Ctrl+Alt+H
 搜索批量替换: Ctrl+F => alt+Enter 即可选中全部需要替换的内容
+批量替换: Ctrl+H
+找到下一个相同的单词: Alt+K  Alt+Shift+K
+光标选多列: Alt+左键(上下拉)
 关闭当前标签: Esc
+设置菜单: Ctrl-q
+在当前行下另起一行: Shift+Enter
 
 # 功能
 - 基于Jstree的文件及文件夹查看、添加、删除、移动、复制操作

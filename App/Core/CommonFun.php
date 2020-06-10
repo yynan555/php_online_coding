@@ -204,9 +204,9 @@ class CommonFun
         if(empty($ip)){
             $ip = self::get_ip();
         }
-        $request_ip_url = 'http://ip.taobao.com/service/getIpInfo.php?ip='.$ip;
+//        $request_ip_url = 'http://ip.taobao.com/service/getIpInfo.php?ip='.$ip;
 
-        $ip_info = json_decode(file_get_contents($request_ip_url),true);
+        $ip_info = '';// json_decode(file_get_contents($request_ip_url),true);
 
         if($ip_info && isset($ip_info['code']) && $ip_info['code'] == 0){
             return $ip_info['data']['region'].$ip_info['data']['city'].$ip_info['data']['county'].' '.$ip_info['data']['isp'].' ip: '.$ip;

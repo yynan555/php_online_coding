@@ -1,6 +1,7 @@
 <pre id="file_area" style="height: 100%;width: 100%;margin:0px auto 0 auto;border-radius:0px; padding:0px;"><?=htmlspecialchars($file_content)?></pre>
 
 <script type="text/javascript" src="<?=STATIC_PATH?>/lib/ace/src-min-noconflict/ace.js"></script>
+<script type="text/javascript" src="<?=STATIC_PATH?>/lib/ace/src-min-noconflict/ext-settings_menu.js"></script>
 <script type="text/javascript" src="<?=STATIC_PATH?>/lib/ace/src-min-noconflict/ext-language_tools.js"></script>
 <script>
     var editor;
@@ -69,7 +70,44 @@
                 parent.global_closeOpenWindow();
             }
         });
+        editor.commands.addCommand({
+            name: 'toNextLine',
+            bindKey: {win: 'Shift+Enter',  mac: ''},
+            exec: function(_editor) {
+                _editor.selection.clearSelection();
+                _editor.navigateLineEnd();
+                _editor.insert("\n");
+            }
+        });
 
+        editor.commands.addCommand({
+            name: "showKeyboardShortcuts",
+            bindKey: {win: "Ctrl-Alt-h", mac: "Command-Alt-h"},
+            exec: function(editor) {
+                ace.config.loadModule("ace/ext/keybinding_menu", function(module) {
+                    module.init(editor);
+                    editor.showKeyboardShortcuts()
+                })
+            }
+        })
+
+        editor.commands.addCommand({
+            name: "yao_addselect_next",
+            bindKey: {win: "Alt+J", mac: ""},
+            exec: function(editor) {
+                editor.selectMore(1);
+            }
+        })
+
+        editor.commands.addCommands([{
+            name: "showSettingsMenu",
+            bindKey: {win: "Ctrl-q", mac: "Ctrl-q"},
+            exec: function(editor) {
+                editor.showSettingsMenu();
+            },
+            readOnly: true
+        }]);
+        ace.require('ace/ext/settings_menu').init(editor);
         editor.getSession().on('change', function(e) {
             is_save = false;
             // 将该文件名变为待保存

@@ -96,8 +96,9 @@ class Controller
 
         if( isset( $file_info['extension']) && stripos(Config::get('app.img_suffix'), $file_info['extension']) !== false ){
             //输出图片
-            header('Content-type: image/'.$file_info['extension']);
-            echo $file_content;
+            $base64_img = CommonFun::base64_encode_image($file_path);
+
+            echo '<img style="max-width: 100%;" src="'.$base64_img.'"/>';
             exit;
         }
         $file_key = File::getFileKey($file_path);

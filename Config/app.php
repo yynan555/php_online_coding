@@ -24,7 +24,6 @@ return [
             'name' => 'admin',
             'access_dirs' => [
                 'C:\wnmp\nginx\www\demo/test',
-                'C:\wnmp\nginx\www\project\fetch_water'
             ], // 该用户可以访问的文件夹
             'access_ips' => [], // 该用户可以进行登录的IP
             'super_user' => true, //是否可以修改本项目 ,请慎重指定(默认有访问数据库权限)
@@ -49,7 +48,7 @@ return [
 
     // 文件相关
     // 不可编辑文件类型 后缀名列表
-    'unable_suffix' => 'pdf xls xlsx crt pem cer ppt pptx doc docx zip gz tar rar fla jar apk mp3 mp4 rmvb ico',
+    'unable_suffix' => 'pdf xls xlsx crt pem cer ppt pptx doc docx zip gz tar rar fla jar apk mp3 mp4 rmvb',
     // 用于显示图片的类型 后缀名列表
-    'img_suffix' => 'jpg png jpeg gif bmp',
+    'img_suffix' => 'jpg png jpeg gif bmp ico',
 ];

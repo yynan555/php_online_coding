@@ -1,10 +1,17 @@
 <pre id="file_area" style="height: 100%;width: 100%;margin:0px auto 0 auto;border-radius:0px; padding:0px;"><?=htmlspecialchars($file_content)?></pre>
 
-<script type="text/javascript" src="<?=STATIC_PATH?>/lib/ace/src-min-noconflict/ace.js"></script>
-<script type="text/javascript" src="<?=STATIC_PATH?>/lib/ace/src-min-noconflict/ext-settings_menu.js"></script>
-<script type="text/javascript" src="<?=STATIC_PATH?>/lib/ace/src-min-noconflict/ext-language_tools.js"></script>
+<script type="text/javascript" src="<?=STATIC_PATH?>/lib/ace/src-noconflict/ace.js"></script>
+<script type="text/javascript" src="<?=STATIC_PATH?>/lib/ace/src-noconflict/ext-settings_menu.js"></script>
+<script type="text/javascript" src="<?=STATIC_PATH?>/lib/ace/src-noconflict/ext-language_tools.js"></script>
+<style>
+    /* 智能补全宽度修改 */
+    .ace_editor.ace_autocomplete {
+        width: 50%;
+    }
+</style>
 <script>
     var editor;
+    var ace_language;
     var $ = parent.$;
     $(function(){
         //初始化对象
@@ -41,7 +48,7 @@
         editor.setOption("wrap", "free");
 
         //启用提示菜单
-        ace.require("ace/ext/language_tools");
+        ace_language = ace.require("ace/ext/language_tools");
         editor.setOptions({
             enableBasicAutocompletion: true,
             enableSnippets: true,
@@ -114,6 +121,68 @@
             $("#min_title_list .active").addClass('red_color');
         });
     })
+</script>
+<script><!-- 代码自动补全 -->
+    <?php
+        $autoCompleterData = [];
+        $autoCompleterRawData = require(BASE_DIR.'/Config/autoCompleter.php');
+        if (!empty($autoCompleterRawData)) {
+            foreach ($autoCompleterRawData as $meta => $keywordsInfos) {
+                foreach ($keywordsInfos as $keyword => $doc) {
+                    if (is_numeric($keyword)) {
+                        $keyword = $doc;
+                        $doc = '';
+                    }
+                    if (!$keyword) continue;
+                    $autoCompleterData[] = [
+                        'name' => $keyword,
+                        'value' => $keyword,
+                        'docHTML' => $doc,
+                        'meta' => $meta,
+                        'score' => 999
+                    ];
+                }
+            }
+        }
+        echo 'var $autoCompleterData = '.json_encode($autoCompleterData).';';
+    ?>
+
+    // 解析当前页面方法
+    //  解析(方法)
+    var reg = /function[\s]+([0-9a-zA-Z_]*)(\([0-9a-zA-Z\s\$\,_\(\)\=\[\]]*\))\s*\{?/g;
+    var autoCompleter_preStr = '$this->'; // 自动补全前缀
+    while(reg.exec(editor.getValue()) != null)
+    {
+        var value = autoCompleter_preStr+RegExp.$1+RegExp.$2+';';
+        $autoCompleterData.push({
+            name: value,
+            value: value,
+            docHTML: value,
+            meta: 'local',
+            score: 1000
+        });
+    }
+    //  解析(属性)
+    var reg = /(public|private|protect)\s+\$([a-zA-Z0-9_]+)/g;
+    while(reg.exec(editor.getValue()) != null)
+    {
+        var value = autoCompleter_preStr+RegExp.$2;
+        $autoCompleterData.push({
+            name: value,
+            value: value,
+            docHTML: value,
+            meta: 'local',
+            score: 1001
+        });
+    }
+
+    if (typeof $autoCompleterData !== "undefined" && $autoCompleterData.length > 0) {
+        ace_language.addCompleter({
+            getCompletions: function(editor, session, pos, prefix, callback) {
+                callback(null,  $autoCompleterData);
+            }
+        });
+    }
 </script>
 <script>
     var file_path = '<?=$file_path?>'; //文件路径

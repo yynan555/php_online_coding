@@ -12,6 +12,9 @@ DEMO地址 : [http://demo.yynan.cn](http://demo.yynan.cn "http://demo.yynan.cn")
 设置菜单: Ctrl-q
 在当前行下另起一行: Shift+Enter
 
+# 代码自动补全
+文件位置: Config/autoCompleter.php
+
 # 功能
 - 基于Jstree的文件及文件夹查看、添加、删除、移动、复制操作
 - 文件内容在线查看和编辑
@@ -23,7 +26,7 @@ DEMO地址 : [http://demo.yynan.cn](http://demo.yynan.cn "http://demo.yynan.cn")
 - 引入数据库管理工具(adminer)
 
 # 界面
-[![编辑目录及文件](http://yynan.cn/uploads/images/php_online_coding.png "php在线代码编辑器")](https://yynan.cn/uploads/images/php_online_coding.png "php在线代码编辑器")
+![编辑目录及文件](./public/introduction.jpg "php在线代码编辑器")
 
 # 目录
 

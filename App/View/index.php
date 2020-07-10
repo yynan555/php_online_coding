@@ -66,5 +66,13 @@
 <script type="text/javascript" src="<?= STATIC_PATH ?>/js/index.js"></script>
 <script type="text/javascript" src="<?= STATIC_PATH ?>/js/index_event.js"></script>
 <script type="text/javascript" src="<?= STATIC_PATH ?>/js/jstree.js"></script>
+<script>
+    // 添加tab切换事件
+    $(document).on("click", "#min_title_list li", function () {
+        setTimeout(function(){
+            global_getSelectedIframe().contentWindow.editor.focus();
+        },100);
+    });
+</script>
 </body>
 </html>

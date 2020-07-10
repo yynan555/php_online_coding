@@ -8,6 +8,9 @@
     .ace_editor.ace_autocomplete {
         width: 50%;
     }
+    .ace-monokai .ace_marker-layer .ace_selected-word {
+        border: 1px solid #fff;
+    }
 </style>
 <script>
     var editor;
@@ -23,11 +26,17 @@
         language = "<?=( isset($file_info['extension']) )?$file_info['extension']:'Text';?>";
 
         editor.setTheme("ace/theme/" + theme);
+
+        // 文件类型到ace文件标识
+        var language_map = {
+            js: 'javascript',
+            htm: 'html',
+            md: 'markdown'
+        };
+
         if(language){
-            if(language == 'js'){
-                language = 'javascript';
-            }else if(language == 'htm'){
-                language = 'html';
+            if (typeof language_map[language] !== "undefined") {
+                language = language_map[language];
             }
             editor.session.setMode("ace/mode/" + language);
         }
@@ -40,8 +49,8 @@
 
         // //设置只读（true时只读，用于展示代码）
         <?php if(!$file_info['is_writeable']): ?>
-            $("#min_title_list .active").addClass('gray_color');
-            editor.setReadOnly(true);
+        $("#min_title_list .active").addClass('gray_color');
+        editor.setReadOnly(true);
         <?php endif; ?>
 
         // //自动换行,设置为off关闭

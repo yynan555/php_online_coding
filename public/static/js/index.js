@@ -62,6 +62,17 @@ function global_closeOpenWindow(close_all = false){
     }
 }
 
+// 得到当前选中tab
+function global_getSelectedTabIndex(){
+    return $('#min_title_list li.active').index();
+}
+
+// 得到当前选中tab的iframe
+function global_getSelectedIframe(){
+    var index = global_getSelectedTabIndex();
+    return $('.show_iframe').eq(index).find('iframe')[0];
+}
+
 // 保存文件
 function global_saveFile(){
     $('.show_iframe').each(function(index,item){
